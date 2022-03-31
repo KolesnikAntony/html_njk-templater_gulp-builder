@@ -1,0 +1,49 @@
+@import "variables";
+
+// Default transition
+
+@function tn($rules...) {
+  $base: 0.2s ease-out;
+  $transition: ();
+  @each $rule in $rules {
+    $transition: append($transition, join($rule, $base), "comma");
+  }
+  @return $transition;
+}
+
+// Convert px to vw
+
+@function vw($target) {
+  $vw-context: (1920 * 0.01) * 1;
+  @return ($target / $vw-context) * 1vw;
+}
+
+// Convert px to vh
+
+@function vh($target) {
+  $vw-context: (1080 * 0.01) * 1;
+  @return ($target / $vw-context) * 1vh;
+}
+
+// Slightly lighten
+
+@function tint($color, $percentage) {
+  @return mix($color-white, $color, $percentage);
+}
+
+// Slightly darken
+
+@function shade($color, $percentage) {
+  @return mix($color-black, $color, $percentage);
+}
+
+// Auto detect background and set color
+
+@function set-text-color($color) {
+  @if (lightness($color) > 50) {
+    @return $color-black; // Light background
+  }
+  @else {
+    @return $color-white; // Dark background
+  }
+}

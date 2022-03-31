@@ -1,0 +1,171 @@
+@import "variables";
+
+// Responsive
+
+@function translate-media-condition($c) {
+  $condMap: (
+    "S": "(min-width: #{$S})",
+    "M": "(min-width: #{$M})",
+    "L": "(min-width: #{$L})",
+    "XL": "(min-width: #{$XL})",
+    "MOBILE": "(max-width: #{$M - 1px})",
+    "TABLET": "(max-width: #{$L - 1px})",
+    "DESKTOP": "(max-width: #{$XL - 1px})",
+  );
+  $result: map-get($condMap, $c);
+  @if ($result == null) {
+    $result: $c;
+  }
+  @return $result;
+}
+
+@mixin media($args...) {
+  $query: "";
+  @each $arg in $args {
+    $op: "";
+    @if ($query != "") {
+      $op: " and ";
+    }
+    $query: $query + $op + translate-media-condition($arg);
+  }
+  @media #{$query} {
+    @content;
+  }
+}
+
+// Visibility
+
+@mixin visibility($type) {
+  @if $type == "hidden" {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: visibility 1s, opacity 1s;
+  }
+  @else if $type == "visible" {
+    visibility: visible;
+    pointer-events: all;
+    opacity: 1;
+    transition: visibility 1s, opacity 1s;
+  }
+}
+
+// Background image
+
+@mixin bg-image {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+// Text overflow
+
+@mixin text-overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+//Animation mixin setup
+
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+  @-moz-keyframes #{$animation-name} {
+    @content;
+  }
+  @-ms-keyframes #{$animation-name} {
+    @content;
+  }
+  @-o-keyframes #{$animation-name} {
+    @content;
+  }
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+@mixin animation($str) {
+  -webkit-animation: #{$str};
+  -moz-animation: #{$str};
+  -o-animation: #{$str};
+  animation: #{$str};
+}
+
+// Retina images
+
+@mixin image-2x($image, $width, $height) {
+  @media (-o-min-device-pixel-ratio: 2.6/2),
+    (-webkit-min-device-pixel-ratio: 1.3),
+    (min-resolution: 1.3dppx) {
+    background-image: url($image);
+    background-size: $width $height;
+  }
+}
+
+// Css triangle
+
+@mixin css-triangle(
+  $color,
+  $direction,
+  $size: 6px,
+  $position: absolute,
+  $round: false
+) {
+  @include pseudo($pos: $position);
+
+  width: 0;
+  height: 0;
+  @if $round {
+    border-radius: 3px;
+  }
+  @if $direction == down {
+    margin-top: 0 - round($size / 2.5);
+    border-top: $size solid $color;
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+  }
+  @else if $direction == up {
+    margin-bottom: 0 - round($size / 2.5);
+    border-right: $size solid transparent;
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+  }
+  @else if $direction == right {
+    margin-right: -$size;
+    border-top: $size solid transparent;
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+  }
+  @else if $direction == left {
+    margin-left: -$size;
+    border-top: $size solid transparent;
+    border-right: $size solid $color;
+    border-bottom: $size solid transparent;
+  }
+}
+
+// Pseudo
+
+@mixin pseudo($display: block, $pos: absolute, $content: "") {
+  content: $content;
+  position: $pos;
+  display: $display;
+}
+
+// Placeholder
+
+@mixin input-placeholder {
+  &.placeholder {
+    @content;
+  }
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
+}
